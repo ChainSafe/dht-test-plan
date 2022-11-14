@@ -8,6 +8,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/host"
 
+	"github.com/testground/sdk-go/run"
 	"github.com/testground/sdk-go/runtime"
 	"github.com/testground/sdk-go/sync"
 )
@@ -17,7 +18,7 @@ var (
 	defaultNodeCount = 40
 )
 
-func runFindProviders(runenv *runtime.RunEnv) error {
+func RunFindProviders(runenv *runtime.RunEnv, initCtx *run.InitContext) error {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultDuration)
 	defer cancel()
 
@@ -28,11 +29,13 @@ func runFindProviders(runenv *runtime.RunEnv) error {
 	for i := range hosts {
 		h, err := newHost(ctx)
 		if err != nil {
+			runenv.RecordMessage("initializing host %d failed: %s", i, h)
 			return err
 		}
 		hosts[i] = h
 	}
 
+	runenv.RecordMessage("all hosts initialized")
 	return nil
 }
 
